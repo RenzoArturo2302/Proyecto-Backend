@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Datatype? > indica que la columna puede tener valores nulos
+// @default(VALOR)  > indica cual será el valor en el calo que el usuario no me lo envie al momento de crear o actualizar
+
+model Receta {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.Text
+  descripcion String?
+  habilitado  Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  Ingrediente Ingrediente[]
+  Preparacion Preparacion[]
+
+  // Si queremos cambiar el nombre de la tabla en la bd
+  // Siempre que queramos modificar algo de la tabla se usa @@ y si es algo relacionado a una columna se usa solo un @
+  @@map("recetas")
+}
+
+model Ingrediente {
+  id       Int    @id @default(autoincrement())
+  titulo   String
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  @@map("ingredientes")
+}
+
+model Preparacion {
+  id          Int      @id @default(autoincrement())
+  orden       Int
+  descripcion String
+  // @updateAt > sirve para que automaticamente cuando se modifique un registro de la bd se cambie su valor a la hora actual del servidor
+  updateAt    DateTime @updatedAt
+  createAt    DateTime @default(now())
+
+  recetaId Int    @map("receta_id")
+  receta   Receta @relation(fields: [recetaId], references: [id])
+
+  @@unique([orden, recetaId])
+  @@map("preparaciones")
+}

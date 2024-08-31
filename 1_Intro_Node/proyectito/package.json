@@ -1,0 +1,15 @@
+{
+    "name": "proyectito",
+    "version": "1.0.0",
+    "author": {
+        "name": "Renzo Arturo"
+    },
+    "license":"UNLICENSED",
+    "engines": {
+        "node": "22.7.0",
+        "npm": "10.8.2"
+    },
+    "scripts": {
+        "saludar": "echo Hola"
+    }
+}
